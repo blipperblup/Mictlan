@@ -19604,36 +19604,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2298868648924661829, guid: 53579404020e1d24d8ca4e8c34280ad7,
-        type: 3}
-      propertyPath: m_Name
-      value: Right Leg
-      objectReference: {fileID: 0}
-    - target: {fileID: 2987065648223697653, guid: 53579404020e1d24d8ca4e8c34280ad7,
-        type: 3}
-      propertyPath: moveWithTransform
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2987065648223697653, guid: 53579404020e1d24d8ca4e8c34280ad7,
-        type: 3}
-      propertyPath: playOnAwake
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2987065648734016173, guid: 53579404020e1d24d8ca4e8c34280ad7,
-        type: 3}
-      propertyPath: playOnAwake
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6455369253975772543, guid: 53579404020e1d24d8ca4e8c34280ad7,
-        type: 3}
-      propertyPath: m_Name
-      value: Head
-      objectReference: {fileID: 0}
-    - target: {fileID: 7914814827546694964, guid: 53579404020e1d24d8ca4e8c34280ad7,
-        type: 3}
-      propertyPath: m_Name
-      value: Torso
-      objectReference: {fileID: 0}
     - target: {fileID: 8311444423716294888, guid: 53579404020e1d24d8ca4e8c34280ad7,
         type: 3}
       propertyPath: m_Name
@@ -19714,17 +19684,8 @@ PrefabInstance:
       propertyPath: CC
       value: 
       objectReference: {fileID: 1627321426}
-    - target: {fileID: 8632812509916841804, guid: 53579404020e1d24d8ca4e8c34280ad7,
-        type: 3}
-      propertyPath: m_Name
-      value: Left Leg
-      objectReference: {fileID: 0}
-    - target: {fileID: 9118889014496065076, guid: 53579404020e1d24d8ca4e8c34280ad7,
-        type: 3}
-      propertyPath: playOnAwake
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1820978365991994778, guid: 53579404020e1d24d8ca4e8c34280ad7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 53579404020e1d24d8ca4e8c34280ad7, type: 3}
 --- !u!23 &9009192946228631982
 MeshRenderer:
