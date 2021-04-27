@@ -83,7 +83,6 @@ public class Flower : Move
     public void Undo()
     {
         flower.SetActive(true);
-        player.hasPower = false;
         player.Aura.SetActive(false);
         player.Glow.SetActive(false);
 
@@ -108,7 +107,6 @@ public class PlayerMover : MonoBehaviour
     public Transform collidePoint;
 
     public bool morphed = false;
-    private bool psShoot = false;
 
     private Vector3 MovementOfPlayerHorizontal;
     private Vector3 MovementOfPlayerVertical;
@@ -154,9 +152,12 @@ public class PlayerMover : MonoBehaviour
     void Start()
     {
 
-        ps.GetComponent<ParticleSystem>().startColor = new Color(0, 0, 0, 72);
+        var main = ps.GetComponent<ParticleSystem>().main;
+        main.startColor = new Color(0, 0, 0, 72);
+
         movePoint.parent = null;
-        //StartCoroutine(MovCoroutine());
+        
+        StartCoroutine(MovCoroutine());
 
         nextSceneToLoad = SceneManager.GetActiveScene().buildIndex + 1;
 
@@ -165,203 +166,134 @@ public class PlayerMover : MonoBehaviour
 
     }
 
-    //IEnumerator MovCoroutine()
-    //{
-    //}
-
-    // Update is called once per frame#
-    void Update()
+    IEnumerator MovCoroutine()
     {
-        if (Input.GetKeyDown("r"))
+        bool playing = true;
+        while (playing)
         {
-            Application.LoadLevel(Application.loadedLevel);
-            transition.SetTrigger("Start");
-        }
-        if (Input.GetKeyDown("space"))
-        {
-            if(Powerleft >= 1)
+            // handle player input
+            if (Input.GetKeyDown("space"))
             {
-                Debug.Log("power drained");
-                movement.SetBool("Draining", true);
-                Powerleft -= 1;
-                psShoot = true;
-                StartCoroutine(cameraShake.Shake(.1f, .4f));
+                if(Powerleft >= 1)
+                {
+                    Debug.Log("power drained");
+                    movement.SetBool("Draining", true);
+                    StartCoroutine(cameraShake.Shake(.1f, .4f));
+                    Powerleft -= 1;
+                    if (Powerleft >= 4)
+                    {
+                        ps.Emit(50);
+                    }
+                    else if (Powerleft == 3)
+                    {
+                        ps.Emit(35);
+                    }
+                    else if (Powerleft == 2)
+                    {
+                        Charged.SetActive(false);
+                        ps.Emit(15);
+                    }
+                    else if (Powerleft == 1)
+                    {
+                        Lesscharge.SetActive(false);
+                        ps.Emit(5);
+                    }
+                    else
+                    {
+                        ps.Emit(10);
+                        LowCharge.SetActive(false);
+                        Glow.SetActive(false);
+                        var main = ps.GetComponent<ParticleSystem>().main;
+                        main.startColor = new Color(0, 0, 0, 72);
+                        Aura.SetActive(false);
+                    }
+                }
             }
-            if (Powerleft == 0)
+            else if (Input.GetKeyDown("q"))
             {
-                ps.Emit(10);
+                DogMorph();
+                //SoundManager.playmorph();
             }
-
-        }
-
-        if (Input.GetKeyDown("escape"))
-        {
-            SceneManager.LoadScene("Menu");
-            transition.SetTrigger("Start");
-
-        }
-        else
-        {
-
-        }
-
-        if (Steps == 2)
-        {
-            morphed = false;
-            HumanForm();
-           //SoundManager.playmorph();
-        }
-
-        //--------------------------------------------------------------------------------------------------------------------------
-        if (Input.GetKeyDown("q"))
-        {
-            DogMorph();
-            //SoundManager.playmorph();
-        }
-
-        //--------------------------------------------------------------------------------------------------------------------------
-
-        //moves towards the collider point
-        transform.position = Vector3.MoveTowards(transform.position, movePoint.position, movespeed * Time.deltaTime);
-
-        if (Vector3.Distance(transform.position, movePoint.position) <= .05f)
-        {
-            if ((Input.GetAxisRaw("Horizontal")) == 1f)
+            else if ((Input.GetAxisRaw("Horizontal")) == 1f)
             {
                 //the code in the brackets detects what area it will be checking for the wall
                 if (!Physics.CheckSphere(collidePoint.position + MovementOfPlayerHorizontal, radiousSphere, whatStopsMovement ^ interactableObject))
                 {
-                    Recordposition();
-                    //moves the collider point, which in return moves the rock
-                    movePoint.position += MovementOfPlayerHorizontal;
-                    Character.transform.rotation = Quaternion.Euler(0, 90, 0);
-                    //Dog.transform.rotation = Quaternion.Euler(0, 90, 0);
-                    SoundManager.playSound();
-                    movement.SetBool("Moving", true);
-                    if (morphed == true)
-                    {
-                        Steps += 1;
-                        dogmovement.SetBool("DogWalk", true);
-                    }
+                    yield return StartCoroutine(MoveCharacterTarget(MovementOfPlayerHorizontal, Quaternion.Euler(0, 90, 0)));
                 }
             }
             else if ((Input.GetAxisRaw("Vertical")) == 1f)
             {
                 if (!Physics.CheckSphere(collidePoint.position + MovementOfPlayerVertical, radiousSphere, whatStopsMovement ^ interactableObject))
                 {
-                    Recordposition();
-                    movePoint.position += MovementOfPlayerVertical;
-                    Character.transform.rotation = Quaternion.Euler(0, 0, 0);
-                    //Dog.transform.rotation = Quaternion.Euler(0, 0, 0);
-                    SoundManager.playSound();
-                    movement.SetBool("Moving", true);
-                    if (morphed == true)
-                    {
-                        Steps += 1;
-                        dogmovement.SetBool("DogWalk", true);
-                    }
+                    yield return StartCoroutine(MoveCharacterTarget(MovementOfPlayerVertical, Quaternion.Euler(0, 0, 0)));
                 }
             }
-
-            if ((Input.GetAxisRaw("Horizontal")) == -1f)
+            else if ((Input.GetAxisRaw("Horizontal")) == -1f)
             {
                 if (!Physics.CheckSphere(collidePoint.position - MovementOfPlayerHorizontal, radiousSphere, whatStopsMovement ^ interactableObject))
                 {
-                    Recordposition();
-                    movePoint.position -= MovementOfPlayerHorizontal;
-                    Character.transform.rotation = Quaternion.Euler(0, -90, 0);
-                    //Dog.transform.rotation = Quaternion.Euler(0, -90, 0);
-                    SoundManager.playSound();
-                    movement.SetBool("Moving", true);
-                    if (morphed == true)
-                    {
-                        Steps += 1;
-                        dogmovement.SetBool("DogWalk", true);
-                    }
+                    yield return StartCoroutine(MoveCharacterTarget(-MovementOfPlayerHorizontal, Quaternion.Euler(0, -90, 0)));
                 }
             }
             else if ((Input.GetAxisRaw("Vertical")) == -1f)
+            {
                 if (!Physics.CheckSphere(collidePoint.position - MovementOfPlayerVertical, radiousSphere, whatStopsMovement ^ interactableObject))
                 {
-                    Recordposition();
-                    movePoint.position -= MovementOfPlayerVertical;
-                    Character.transform.rotation = Quaternion.Euler(0, -180, 0);
-                    //Dog.transform.rotation = Quaternion.Euler(0, -180, 0);
-                    SoundManager.playSound();
-                    movement.SetBool("Moving", true);
-                    if (morphed == true)
-                    {
-                        Steps += 1;
-                        dogmovement.SetBool("DogWalk", true);
-                    }
-                }
-            //--------------------------------------------------------------------------------------------------------------------------
-            if (hasPower == true)
-            {
-                Aura.SetActive(true);
-                Glow.SetActive(true);
-
-                Charged.SetActive(true);
-                Lesscharge.SetActive(true);
-                LowCharge.SetActive(true);
-                Powerleft += 3;
-                hasPower = false;
-                ps.GetComponent<ParticleSystem>().startColor = new Color(255, 255, 255, 255);
-            }
-            //--------------------------------------------------------------------------------------------------------------------------
-
-            if (Powerleft >= 4)
-            {
-
-                if (psShoot== true)
-                {
-                    PowerEmit();
-                }
-
-            }
-            if (Powerleft == 3)
-            {
-
-                if (psShoot == true)
-                {
-                    PowerEmit();
-                }
-   
-            }
-            if (Powerleft == 2)
-            {
-                Charged.SetActive(false);
-                if (psShoot == true)
-                {
-                    PowerEmit();
+                    yield return StartCoroutine(MoveCharacterTarget(-MovementOfPlayerVertical, Quaternion.Euler(0, -180, 0)));
                 }
             }
-            if (Powerleft == 1)
-            {
-                Lesscharge.SetActive(false);
-                if (psShoot == true)
-                {
-                    PowerEmit();
-                }
-            }
-            if (Powerleft == 0)
-            {
-                LowCharge.SetActive(false);
-                Glow.SetActive(false);
-                ps.GetComponent<ParticleSystem>().startColor = new Color(0, 0, 0, 72);
-                Aura.SetActive(false);
-            }
 
+            yield return null;
+        }
+    }
 
+    IEnumerator MoveCharacterTarget(Vector3 move, Quaternion direction)
+    {
+        Recordposition();
+        //moves the collider point, which in return moves the rock
+        movePoint.position += move;
+        Character.transform.rotation = direction;
+        SoundManager.playSound();
+        movement.SetBool("Moving", true);
+        if (morphed == true)
+        {
+            dogmovement.SetBool("DogWalk", true);
+            Steps += 1;
+            if (Steps == 2)
+            {
+                morphed = false;
+                HumanForm();
+            }
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------
-
-        void OnDrawGizmosSelected()
+        while (Vector3.Distance(transform.position, movePoint.position) > .05f)
         {
-            // Display the explosion radius when selected
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(collidePoint.position, radiousSphere);
+            transform.position = Vector3.MoveTowards(transform.position, movePoint.position, movespeed * Time.deltaTime);
+            yield return null;
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        // Display the explosion radius when selected
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(collidePoint.position, radiousSphere);
+    }
+
+    // Update is called once per frame#
+    void Update()
+    {
+        if (Input.GetKeyDown("r"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            transition.SetTrigger("Start");
+        }
+
+        if (Input.GetKeyDown("escape"))
+        {
+            SceneManager.LoadScene("Menu");
+            transition.SetTrigger("Start");
         }
     }
 
@@ -380,7 +312,15 @@ public class PlayerMover : MonoBehaviour
             burst.SetActive(true);
             //Destroy(col.gameObject);
             col.gameObject.SetActive(false);
-            hasPower = true;
+            Aura.SetActive(true);
+            Glow.SetActive(true);
+            Charged.SetActive(true);
+            Lesscharge.SetActive(true);
+            LowCharge.SetActive(true);
+            Powerleft += 3;
+
+            var main = ps.GetComponent<ParticleSystem>().main;
+            main.startColor = new Color(255, 255, 255, 255);
             //movement.SetBool("Charging", true);
             SoundManager.playFlower();
             StartCoroutine(effectoff());
@@ -430,29 +370,6 @@ public class PlayerMover : MonoBehaviour
         Steps = 0;
     }
 
-    void PowerEmit()
-    {
-        if (Powerleft >= 4)
-        {
-            ps.Emit(50);
-            psShoot = false;
-        }
-        if (Powerleft == 3)
-        {
-            ps.Emit(35);
-            psShoot = false;
-        }
-        if (Powerleft == 2)
-        {
-            ps.Emit(15);
-            psShoot = false;
-        }
-        if (Powerleft == 1)
-        {
-            ps.Emit(5);
-            psShoot = false;
-        }
-    }
 
 
 }
