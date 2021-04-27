@@ -37,6 +37,7 @@ public class MorphDog : Move
     }
     public void Undo()
     {
+        player.movement.SetBool("Morph", false);
         player.Player.SetActive(true);
         player.Dog.SetActive(false);
         player.morphed = false;
@@ -58,6 +59,7 @@ public class MorphHuman : Move
     }
     public void Undo()
     {
+        player.movement.SetBool("Morph", true);
         player.Player.SetActive(false);
         player.Dog.SetActive(true);
         player.morphed = true;
@@ -136,6 +138,7 @@ public class PlayerMover : MonoBehaviour
 
     public Animator transition;
     public Animator movement;
+    public Animator dogmovement;
 
     public ParticleSystem ps;
     public timelord TL;
@@ -238,7 +241,7 @@ public class PlayerMover : MonoBehaviour
                     if (morphed == true)
                     {
                         Steps += 1;
-
+                        dogmovement.SetBool("DogWalk", true);
                     }
                 }
             }
@@ -255,7 +258,7 @@ public class PlayerMover : MonoBehaviour
                     if (morphed == true)
                     {
                         Steps += 1;
-
+                        dogmovement.SetBool("DogWalk", true);
                     }
                 }
             }
@@ -273,7 +276,7 @@ public class PlayerMover : MonoBehaviour
                     if (morphed == true)
                     {
                         Steps += 1;
-
+                        dogmovement.SetBool("DogWalk", true);
                     }
                 }
             }
@@ -289,7 +292,7 @@ public class PlayerMover : MonoBehaviour
                     if (morphed == true)
                     {
                         Steps += 1;
-
+                        dogmovement.SetBool("DogWalk", true);
                     }
                 }
             //--------------------------------------------------------------------------------------------------------------------------
