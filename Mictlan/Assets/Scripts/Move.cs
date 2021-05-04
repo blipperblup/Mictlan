@@ -4,6 +4,5 @@ using UnityEngine;
 
 public interface Move
 {
-    void Undo();
-
+    IEnumerator Undo(PlayerMover mover);
 }
