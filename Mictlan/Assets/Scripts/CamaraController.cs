@@ -24,6 +24,10 @@ public class CamaraController : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
+        if(currentView == null)
+        {
+            return;
+        }
         transform.position = Vector3.Lerp(transform.position, currentView.position, Time.deltaTime * transitionSpeed);
 
         Vector3 currentAngle = new Vector3(Mathf.LerpAngle(transform.rotation.eulerAngles.x, currentView.transform.rotation.eulerAngles.x, Time.deltaTime * transitionSpeed),

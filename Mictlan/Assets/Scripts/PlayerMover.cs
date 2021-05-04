@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -43,14 +44,19 @@ public class MorphDog : Move
 public class UsePower : Move
 {
     int powerLeft;
-
-    public UsePower(int powerLeft)
+    List<Rock> rocks;
+    public UsePower(int powerLeft, List<Rock> rocks)
     {
         this.powerLeft = powerLeft;
+        this.rocks = new List<Rock>(rocks);
     }
 
     public IEnumerator Undo(PlayerMover player)
     {
+        foreach (Rock rock in rocks)
+        {
+            rock.Pull(player);
+        }
         player.Powerleft = powerLeft;
         player.ShowCurrentPower();
         yield return null;
@@ -106,6 +112,7 @@ public class PlayerMover : MonoBehaviour
     public CamaraController CC;
 
     GameObject pickedFlower = null;
+    List<Rock> rocks = new List<Rock>();
 
     // Start is called before the first frame update
     void Start()
@@ -122,7 +129,13 @@ public class PlayerMover : MonoBehaviour
         MovementOfPlayerHorizontal = new Vector3(Mov, 0f, 0f);
         MovementOfPlayerVertical = new Vector3(0f, 0f, Mov);
     }
-
+    public void nexttorock(Rock rock)
+    {
+        if (!rocks.Contains(rock))
+        {
+            rocks.Add(rock);
+        }
+    }
     public void ShowCurrentPower()
     {
         Debug.Log("power drained");
@@ -149,7 +162,9 @@ public class PlayerMover : MonoBehaviour
         else
         {
             ps.Emit(10);
+            Charged.SetActive(false);
             LowCharge.SetActive(false);
+            Lesscharge.SetActive(false);
             Glow.SetActive(false);
             var main = ps.GetComponent<ParticleSystem>().main;
             main.startColor = new Color(0, 0, 0, 72);
@@ -167,7 +182,11 @@ public class PlayerMover : MonoBehaviour
             {
                 if(Powerleft >= 1)
                 {
-                    TL.Record(new UsePower(Powerleft));
+                    foreach(Rock rock in rocks)
+                    {
+                        rock.Push(this);
+                    }
+                    TL.Record(new UsePower(Powerleft, rocks));
                     Powerleft -= 1;
                     ShowCurrentPower();
                 }
@@ -247,6 +266,8 @@ public class PlayerMover : MonoBehaviour
                 yield return null;
             }
 
+            rocks.Clear();
+
             if (pickedFlower != null)
             {
                 undo.restoreFlower = pickedFlower;
@@ -303,6 +324,7 @@ public class PlayerMover : MonoBehaviour
         {
             restoreFlower.SetActive(true);
             Powerleft = powerLeft;
+            ShowCurrentPower();
         }
 
         while (Vector3.Distance(transform.position, movePoint.position) > .05f)

@@ -49,6 +49,20 @@ public class Rock : MonoBehaviour
         anim = gameObject.GetComponent<Animator>();
     }
 
+    public void Push(PlayerMover player)
+    {       
+        Vector3 move = rock.transform.position - player.transform.position;
+        move.y = 0;
+        rock.transform.position += move;
+        SoundManager.playRock();
+        ps.Emit(10);
+    }
+    public void Pull(PlayerMover player)
+    {       
+        Vector3 move = (player.transform.position - rock.transform.position) * 0.5f;
+        move.y = 0;
+        rock.transform.position += move;
+    }
     void Update()
     {
         //moves towards the collider point
@@ -61,28 +75,9 @@ public class Rock : MonoBehaviour
                 {
                     if (!Physics.CheckSphere(collidePoint.position - new Vector3(0f, 0f, Mov), radiousSphere, whatStopsMovement ^ interactableObject ^ interactableObject2))
                     {
-                        anim.SetBool("Shake", false);
-                        if (Input.GetKeyDown("space") && playerMov.Powerleft >= 1)
-                        {
-                            print("space key was pressed");
-                            rock.transform.position -= new Vector3(0f, 0f, Mov);
-                            SoundManager.playRock();
-                            ps.Emit(10);
-
-                        }
-                        else
-                        {
-                        if(playerMov.Powerleft <= 0)
-                        {
-                            anim.SetBool("Shake", true);
-                        }
-                        }                   
+                        playerMov.nexttorock(this);                                                                 
                     }
                 }
-            else
-            {
-
-            }
             }
             
         if (Physics.CheckSphere(collidePoint.position + new Vector3(5f, 0f, 0f), radiousSphere, PlayerMask))
@@ -91,28 +86,10 @@ public class Rock : MonoBehaviour
             {
                 if (!Physics.CheckSphere(collidePoint.position - new Vector3(Mov, 0f, 0f), radiousSphere, whatStopsMovement ^ interactableObject ^ interactableObject2))
                 {
-                    anim.SetBool("Shake", false);
-                    if (Input.GetKeyDown("space") && playerMov.Powerleft >= 1)
-                    {
-
-                        print("space key was pressed");
-                        rock.transform.position -= new Vector3(Mov, 0f, 0f);
-                        SoundManager.playRock();
-                        ps.Emit(10);
-                    }
-                    else
-                    {
-                        if (Input.GetKeyDown("space") && playerMov.Powerleft <= 0)
-                        {
-                            anim.SetBool("Shake", true);
-                        }
-                    }
+                    playerMov.nexttorock(this);
                 }
             }
-            else
-            {
-
-            }
+           
 
         }
         if (Physics.CheckSphere(collidePoint.position + new Vector3(-5f, 0f, 0f), radiousSphere, PlayerMask))
@@ -121,28 +98,10 @@ public class Rock : MonoBehaviour
             {
                 if (!Physics.CheckSphere(collidePoint.position + new Vector3(Mov, 0f, 0f), radiousSphere, whatStopsMovement ^ interactableObject ^ interactableObject2))
                 {
-                    anim.SetBool("Shake", false);
-                    if (Input.GetKeyDown("space") && playerMov.Powerleft >= 1)
-                    {
-
-                        print("space key was pressed");
-                        rock.transform.position += new Vector3(Mov, 0f, 0f);
-                        SoundManager.playRock();
-                        ps.Emit(10);
-                    }
-                    else
-                    {
-                        if (Input.GetKeyDown("space") && playerMov.Powerleft <= 0)
-                        {
-                            anim.SetBool("Shake", true);
-                        }
-                    }
+                    playerMov.nexttorock(this);
                 }
             }
-            else
-            {
 
-            }
         }
         if (Physics.CheckSphere(collidePoint.position + new Vector3(0f, 0f, -5f), radiousSphere, PlayerMask))
         {
@@ -150,27 +109,8 @@ public class Rock : MonoBehaviour
             {
                 if (!Physics.CheckSphere(collidePoint.position + new Vector3(0f, 0f, Mov), radiousSphere, whatStopsMovement ^ interactableObject ^ interactableObject2))
                 {
-                    anim.SetBool("Shake", false);
-                    if (Input.GetKeyDown("space") && playerMov.Powerleft >= 1)
-                    {
-
-                        print("space key was pressed");
-                        rock.transform.position += new Vector3(0f, 0f, Mov);
-                        SoundManager.playRock();
-                        ps.Emit(10);
-                    }
-                    else
-                    {
-                        if (Input.GetKeyDown("space") && playerMov.Powerleft <= 0)
-                        {
-                            anim.SetBool("Shake", true);
-                        }
-                    }
+                    playerMov.nexttorock(this);
                 }
-            }
-            else
-            {
-
             }
         }
     }

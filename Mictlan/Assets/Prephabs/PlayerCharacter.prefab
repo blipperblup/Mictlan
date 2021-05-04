@@ -34243,7 +34243,7 @@ GameObject:
   m_Layer: 10
   m_Name: Collidepoint
   m_TagString: Untagged
-  m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -34941,8 +34941,8 @@ ParticleSystem:
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
     donutRadius: 0.2
-    m_Position: {x: -1.4992609, y: 2.1751385, z: 0}
-    m_Rotation: {x: 270, y: 0, z: 0}
+    m_Position: {x: 0, y: 2.1751385, z: 0}
+    m_Rotation: {x: 270, y: -0, z: 0}
     m_Scale: {x: 1, y: 1, z: 1}
     placementMode: 0
     m_MeshMaterialIndex: 0
@@ -39174,7 +39174,7 @@ MonoBehaviour:
   interactableObject:
     serializedVersion: 2
     m_Bits: 512
-  Player: {fileID: 0}
+  Player: {fileID: 6868451922115064860}
   Dog: {fileID: 9206358344464993309}
   Glow: {fileID: 1245702901541657261}
   Aura: {fileID: 2987065648734016175}
@@ -39200,7 +39200,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8311444423716294888}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.9308525, y: 2.8, z: 1}
